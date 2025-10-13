@@ -1,0 +1,101 @@
+-----  UPDATE OPERATION  -----
+
+DELIMITER $$
+CREATE OR REPLACE TRIGGER library_update
+BEFORE UPDATE ON Library
+FOR EACH ROW
+BEGIN
+    INSERT INTO LibraryAudit (
+        action, trigger_time, book_id, title, author, p_year
+    ) VALUES (
+        'UPDATE', 'BEFORE', OLD.book_id, OLD.title, OLD.author, OLD.p_year
+    );
+END $$
+DELIMITER ;
+
+
+
+OUTPUT:
+
+mysql> select * from Library;
++---------+-------------------+-----------+--------+
+| book_id | title             | author    | p_year |
++---------+-------------------+-----------+--------+
+|     101 | Dune              | Frank     |   1965 |
+|     102 | Train to Pakistan | Khushwant |   1956 |
++---------+-------------------+-----------+--------+
+2 rows in set (0.00 sec)
+
+mysql> update Library set title = 'dune' where book_id = 101;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from LibraryAudit;
++----------+--------+--------------+---------+-------+--------+--------+---------------------+
+| audit_id | action | trigger_time | book_id | title | author | p_year | action_time         |
++----------+--------+--------------+---------+-------+--------+--------+---------------------+
+|        5 | UPDATE | BEFORE       |     101 | Dune  | Frank  |   1965 | 2025-09-20 10:25:32 |
++----------+--------+--------------+---------+-------+--------+--------+---------------------+
+1 row in set (0.01 sec)
+
+
+
+
+
+-----  DELETE OPERATION  -----
+
+DELIMITER $$
+CREATE OR REPLACE TRIGGER library_delete
+BEFORE DELETE ON Library
+FOR EACH ROW
+BEGIN
+    INSERT INTO LibraryAudit (
+        action, trigger_time, book_id, title, author, p_year
+    ) VALUES (
+        'DELETE', 'BEFORE',OLD.book_id, OLD.title, OLD.author, OLD.p_year
+    );
+END $$
+DELIMITER ;
+
+
+
+OUTPUT:
+
+mysql> select * from Library;
++---------+-------------------+-----------+--------+
+| book_id | title             | author    | p_year |
++---------+-------------------+-----------+--------+
+|     101 | dune              | Frank     |   1965 |
+|     102 | Train to Pakistan | Khushwant |   1956 |
++---------+-------------------+-----------+--------+
+2 rows in set (0.00 sec)
+
+mysql> delete from Library where book_id = 101;
+Query OK, 1 row affected (0.03 sec)
+
+mysql> select * from LibraryAudit;
++----------+--------+--------------+---------+-------+--------+--------+---------------------+
+| audit_id | action | trigger_time | book_id | title | author | p_year | action_time         |
++----------+--------+--------------+---------+-------+--------+--------+---------------------+
+|        5 | UPDATE | BEFORE       |     101 | Dune  | Frank  |   1965 | 2025-09-20 10:25:32 |
+|        6 | DELETE | BEFORE       |     101 | dune  | Frank  |   1965 | 2025-09-20 10:29:02 |
++----------+--------+--------------+---------+-------+--------+--------+---------------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from Library;
++---------+-------------------+-----------+--------+
+| book_id | title             | author    | p_year |
++---------+-------------------+-----------+--------+
+|     102 | Train to Pakistan | Khushwant |   1956 |
++---------+-------------------+-----------+--------+
+1 row in set (0.00 sec)
+
+
+
+----- COMMAND TO RUN FILE -----
+mysql -h 10.10.10.55 -u te31411 -p te31411_db < delete.sql
+
+
+
+
+

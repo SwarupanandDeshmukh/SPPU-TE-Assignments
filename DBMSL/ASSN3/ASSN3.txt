@@ -1,0 +1,288 @@
+
+#QUERY 1: Find Employee details and Department details using NATURAL JOIN.
+
+mysql> select * from Employee NATURAL JOIN Dept;
++---------+--------+-----------+-----------+--------------+------------+--------------+------------+---------------+
+| Dept_id | Emp_id | Emp_fname | Emp_lname | Emp_Position | Emp_salary | Emp_JoinDate | Dept_name  | Dept_location |
++---------+--------+-----------+-----------+--------------+------------+--------------+------------+---------------+
+|     101 |      1 | Peter     | Hall      | Manager      |      60000 | 1980-06-15   | Computer   | Delhi         |
+|     102 |      2 | Harry     | Potter    | Analyst      |      49500 | 1988-03-12   | IT         | Bangalore     |
+|     101 |      3 | Paul      | Smith     | Clerk        |      30000 | 1984-09-25   | Computer   | Delhi         |
+|     105 |      6 | Alice     | Brown     | Manager      |      70000 | 1982-07-22   | Marketing  | Chennai       |
+|     101 |      7 | Helen     | White     | Analyst      |      52800 | 2000-01-10   | Computer   | Delhi         |
+|     102 |      8 | Perry     | Black     | Developer    |      55000 | 1983-04-30   | IT         | Bangalore     |
+|     106 |      9 | Bob       | Green     | Technician   |      41800 | 1998-06-14   | Operations | Pune          |
+|     107 |     10 | Harry     | Gold      | Clerk        |      31000 | 1979-02-25   | Support    | Hyderabad     |
++---------+--------+-----------+-----------+--------------+------------+--------------+------------+---------------+
+
+
+
+
+#QUERY 2: Find Emp_fname,Emp_position,location,Emp_JoinDate who have same Dept id.
+
+mysql> select Employee.Emp_fname,Employee.Emp_position,Dept.Dept_location,Employee.Emp_JoinDate from Employee JOIN Dept ON Employee.Dept_id=Dept.Dept_id;
++-----------+--------------+---------------+--------------+
+| Emp_fname | Emp_position | Dept_location | Emp_JoinDate |
++-----------+--------------+---------------+--------------+
+| Peter     | Manager      | Delhi         | 1980-06-15   |
+| Harry     | Analyst      | Bangalore     | 1988-03-12   |
+| Paul      | Clerk        | Delhi         | 1984-09-25   |
+| Alice     | Manager      | Chennai       | 1982-07-22   |
+| Helen     | Analyst      | Delhi         | 2000-01-10   |
+| Perry     | Developer    | Bangalore     | 1983-04-30   |
+| Bob       | Technician   | Pune          | 1998-06-14   |
+| Harry     | Clerk        | Hyderabad     | 1979-02-25   |
++-----------+--------------+---------------+--------------+
+8 rows in set (0.00 sec)
+
+
+
+
+#QUERY 3: Find Employee details,Proj_id,Project cost who does not have Project location as 'Hyderabad'.
+
+mysql> select e.Emp_id,e.Emp_fname,p.Proj_id,p.Proj_cost from Employee e JOIN Project p ON e.Dept_id=p.Dept_id WHERE p.Proj_Location!="Hyderabad";
++--------+-----------+---------+-----------+
+| Emp_id | Emp_fname | Proj_id | Proj_cost |
++--------+-----------+---------+-----------+
+|      1 | Peter     |     201 |    120000 |
+|      2 | Harry     |     202 |    300000 |
+|      3 | Paul      |     201 |    120000 |
+|      7 | Helen     |     201 |    120000 |
+|      8 | Perry     |     202 |    300000 |
++--------+-----------+---------+-----------+
+5 rows in set (0.00 sec)
+
+
+
+
+#QUERY 4: Find Department Name,employee name,Emp_position for which project year is 2020.
+
+mysql> select d.Dept_name,e.Emp_fname,e.Emp_Position from Employee e JOIN Dept d ON e.Dept_id=d.Dept_id JOIN Project p ON e.Dept_id=p.Dept_id
+WHERE p.Proj_year=2020;
++-----------+-----------+--------------+
+| Dept_name | Emp_fname | Emp_Position |
++-----------+-----------+--------------+
+| Support   | Harry     | Clerk        |
++-----------+-----------+--------------+
+1 row in set (0.00 sec)
+
+
+
+
+#QUERY 5: Display emp_position,D_name who have Project cost > 30000.
+
+mysql> select e.Emp_id, e.Emp_position,d.Dept_name from Employee e INNER JOIN Dept d ON e.Dept_id=d.Dept_id INNER JOIN Project p ON p.Dept_id=e.Dept_id WHERE p.Proj_cost>100000;
++--------+--------------+-----------+
+| Emp_id | Emp_position | Dept_name |
++--------+--------------+-----------+
+|      1 | Manager      | Computer  |
+|      2 | Analyst      | IT        |
+|      3 | Clerk        | Computer  |
+|      7 | Analyst      | Computer  |
+|      8 | Developer    | IT        |
++--------+--------------+-----------+
+5 rows in set (0.00 sec)
+
+
+
+
+#QUERY 6: Find the names of all the Projects that started in the year 2015.
+
+mysql> select p.Proj_Name from Project p INNER JOIN Dept d ON p.dept_id = d.dept_id WHERE p.Proj_year = 2015;
++-------------+
+| Proj_Name   |
++-------------+
+| AD Campaign |
++-------------+
+1 row in set (0.03 sec)
+
+
+
+
+#QUERY 7: List the Dept_name having no_of_emp = 10.
+
+mysql> select d.Dept_name FROM Dept d JOIN Employee e ON d.Dept_id = e.Dept_id GROUP BY d.Dept_name HAVING COUNT(e.Emp_id) > 1;
++-----------+
+| Dept_name |
++-----------+
+| Computer  |
+| IT        |
++-----------+
+2 rows in set (0.00 sec)
+
+
+
+
+#QUERY 8: Display the total number of employee who have joined any project before 2009.
+
+mysql> select COUNT(e.Emp_id) AS No_of_Employee FROM Employee e JOIN Project p ON e.Dept_id = p.Dept_id WHERE p.Proj_year < 2009;
++----------------+
+| No_of_Employee |
++----------------+
+|              5 |
++----------------+
+1 row in set (0.00 sec)
+
+
+
+
+#QUERY 9: Create a view showing the employee and Department details.
+
+mysql> CREATE VIEW `myview` AS SELECT * from Employee NATURAL JOIN Dept;
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> select * from `myview`;
++---------+--------+-----------+-----------+--------------+------------+--------------+------------+---------------+
+| Dept_id | Emp_id | Emp_fname | Emp_lname | Emp_Position | Emp_salary | Emp_JoinDate | Dept_name  | Dept_location |
++---------+--------+-----------+-----------+--------------+------------+--------------+------------+---------------+
+|     101 |      1 | Peter     | Hall      | Manager      |      60000 | 1980-06-15   | Computer   | Delhi         |
+|     102 |      2 | Harry     | Potter    | Analyst      |      49500 | 1988-03-12   | IT         | Bangalore     |
+|     101 |      3 | Paul      | Smith     | Clerk        |      30000 | 1984-09-25   | Computer   | Delhi         |
+|     105 |      6 | Alice     | Brown     | Manager      |      70000 | 1982-07-22   | Marketing  | Chennai       |
+|     101 |      7 | Helen     | White     | Analyst      |      52800 | 2000-01-10   | Computer   | Delhi         |
+|     102 |      8 | Perry     | Black     | Developer    |      55000 | 1983-04-30   | IT         | Bangalore     |
+|     106 |      9 | Bob       | Green     | Technician   |      41800 | 1998-06-14   | Operations | Pune          |
+|     107 |     10 | Harry     | Gold      | Clerk        |      31000 | 1979-02-25   | Support    | Hyderabad     |
++---------+--------+-----------+-----------+--------------+------------+--------------+------------+---------------+
+8 rows in set (0.01 sec)
+
+
+
+
+#QUERY 10: Perform Manipulation on simple view-Insert,update,delete,drop view.
+
+mysql> create view Employee_view as select * from Employee;
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> select * from Employee_view;
++--------+---------+-----------+-----------+--------------+------------+--------------+
+| Emp_id | Dept_id | Emp_fname | Emp_lname | Emp_Position | Emp_salary | Emp_JoinDate |
++--------+---------+-----------+-----------+--------------+------------+--------------+
+|      1 |     101 | Peter     | Hall      | Manager      |      60000 | 1980-06-15   |
+|      2 |     102 | Harry     | Potter    | Analyst      |      49500 | 1988-03-12   |
+|      3 |     101 | Paul      | Smith     | Clerk        |      30000 | 1984-09-25   |
+|      6 |     105 | Alice     | Brown     | Manager      |      70000 | 1982-07-22   |
+|      7 |     101 | Helen     | White     | Analyst      |      52800 | 2000-01-10   |
+|      8 |     102 | Perry     | Black     | Developer    |      55000 | 1983-04-30   |
+|      9 |     106 | Bob       | Green     | Technician   |      41800 | 1998-06-14   |
+|     10 |     107 | Harry     | Gold      | Clerk        |      31000 | 1979-02-25   |
++--------+---------+-----------+-----------+--------------+------------+--------------+
+8 rows in set (0.00 sec)
+
+mysql> insert into Employee_view(Emp_id,Dept_id,Emp_fname,Emp_lname,Emp_Position,Emp_salary,Emp_JoinDate) values (11,106,"Raj","Verma","Manager",50000,"1990-02-11");
+Query OK, 1 row affected (0.03 sec)
+
+mysql> select * from Employee_view;
++--------+---------+-----------+-----------+--------------+------------+--------------+
+| Emp_id | Dept_id | Emp_fname | Emp_lname | Emp_Position | Emp_salary | Emp_JoinDate |
++--------+---------+-----------+-----------+--------------+------------+--------------+
+|      1 |     101 | Peter     | Hall      | Manager      |      60000 | 1980-06-15   |
+|      2 |     102 | Harry     | Potter    | Analyst      |      49500 | 1988-03-12   |
+|      3 |     101 | Paul      | Smith     | Clerk        |      30000 | 1984-09-25   |
+|      6 |     105 | Alice     | Brown     | Manager      |      70000 | 1982-07-22   |
+|      7 |     101 | Helen     | White     | Analyst      |      52800 | 2000-01-10   |
+|      8 |     102 | Perry     | Black     | Developer    |      55000 | 1983-04-30   |
+|      9 |     106 | Bob       | Green     | Technician   |      41800 | 1998-06-14   |
+|     10 |     107 | Harry     | Gold      | Clerk        |      31000 | 1979-02-25   |
+|     11 |     106 | Raj       | Verma     | Manager      |      50000 | 1990-02-11   |
++--------+---------+-----------+-----------+--------------+------------+--------------+
+9 rows in set (0.00 sec)
+
+mysql> update Employee_view set Emp_salary = Emp_salary + (Emp_salary / 10) WHERE Emp_fname = "Raj";
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from Employee_view;
++--------+---------+-----------+-----------+--------------+------------+--------------+
+| Emp_id | Dept_id | Emp_fname | Emp_lname | Emp_Position | Emp_salary | Emp_JoinDate |
++--------+---------+-----------+-----------+--------------+------------+--------------+
+|      1 |     101 | Peter     | Hall      | Manager      |      60000 | 1980-06-15   |
+|      2 |     102 | Harry     | Potter    | Analyst      |      49500 | 1988-03-12   |
+|      3 |     101 | Paul      | Smith     | Clerk        |      30000 | 1984-09-25   |
+|      6 |     105 | Alice     | Brown     | Manager      |      70000 | 1982-07-22   |
+|      7 |     101 | Helen     | White     | Analyst      |      52800 | 2000-01-10   |
+|      8 |     102 | Perry     | Black     | Developer    |      55000 | 1983-04-30   |
+|      9 |     106 | Bob       | Green     | Technician   |      41800 | 1998-06-14   |
+|     10 |     107 | Harry     | Gold      | Clerk        |      31000 | 1979-02-25   |
+|     11 |     106 | Raj       | Verma     | Manager      |      55000 | 1990-02-11   |
++--------+---------+-----------+-----------+--------------+------------+--------------+
+9 rows in set (0.00 sec)
+
+mysql> delete from Employee_view where Emp_fname = "Raj";
+Query OK, 1 row affected (0.04 sec)
+
+mysql> drop view Employee_view;
+Query OK, 0 rows affected (0.00 sec)
+
+
+
+
+
+<---------------- OUTER JOIN -------------------->
+
+mysql> CREATE TABLE Dept_dummy (     dept_id INT PRIMARY KEY,     dept_name VARCHAR(50) );
+Query OK, 0 rows affected (0.18 sec)
+
+mysql> CREATE TABLE Employee_dummy (     emp_id INT PRIMARY KEY,     emp_name VARCHAR(50),     dept_id INT,     FOREIGN KEY (dept_id) REFERENCES Department(dept_id) );
+ERROR 1005 (HY000): Can't create table `te31411_db`.`Employee_dummy` (errno: 150 "Foreign key constraint is incorrectly formed")
+mysql> CREATE TABLE Employee_dummy (     emp_id INT PRIMARY KEY,     emp_name VARCHAR(50),     dept_id INT,     FOREIGN KEY (dept_id) REFERENCES Dept_dummy(dept_id) );
+Query OK, 0 rows affected (0.21 sec)
+
+
+mysql> insert into Dept_dummy values (1, 'HR'),(2,'Finance'),(3,'Engineering');
+Query OK, 3 rows affected (0.05 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into Employee_dummy values (101,"Alice",1),(102,"Bob",2),(103,"Raj",NULL);
+Query OK, 3 rows affected (0.02 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+
+
+
+#QUERY 11: RIGHT OUTER JOIN.
+
+mysql> SELECT e.emp_name,d.dept_name FROM Dept_dummy d RIGHT OUTER JOIN Employee_dummy e ON e.dept_id=d.dept_id;
++----------+-----------+
+| emp_name | dept_name |
++----------+-----------+
+| Alice    | HR        |
+| Bob      | Finance   |
+| Raj      | NULL      |
++----------+-----------+
+3 rows in set (0.00 sec)
+
+
+
+
+#QUERY 12: LEFT OUTER JOIN.
+
+mysql> SELECT d.dept_name,e.emp_name FROM Dept_dummy d LEFT OUTER JOIN Employee_dummy e ON e.dept_id=d.dept_id;
++-------------+----------+
+| dept_name   | emp_name |
++-------------+----------+
+| HR          | Alice    |
+| Finance     | Bob      |
+| Engineering | NULL     |
++-------------+----------+
+3 rows in set (0.00 sec)
+
+
+
+
+#OUERY 13: FULL JOIN.
+
+mysql> SELECT d.dept_name,e.emp_name FROM Dept_dummy d LEFT JOIN Employee_dummy e ON e.dept_id=d.dept_id UNION SELECT d.dept_name,e.emp_name FROM Dept_dummy d RIGHT JOIN Employee_dummy e ON e.dept_id=d.dept_id;
++-------------+----------+
+| dept_name   | emp_name |
++-------------+----------+
+| HR          | Alice    |
+| Finance     | Bob      |
+| Engineering | NULL     |
+| NULL        | Raj      |
++-------------+----------+
+4 rows in set (0.00 sec)
+
+
+
+

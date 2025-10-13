@@ -1,0 +1,12 @@
+MACRO
+INNER &A &B
+    MOVER &A ='5'
+    ADD &B ='10'
+MEND
+MACRO
+OUTER &X &Y
+    MOVER &X ='1'
+    INNER &X &Y
+    MOVER &Y ='20'
+MEND
+OUTER AREG BREG

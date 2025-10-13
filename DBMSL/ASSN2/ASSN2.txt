@@ -1,0 +1,377 @@
+mysql> Use te31411_db;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+
+
+mysql> DESCRIBE te31411_db.Dept;
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| Dept_id       | int(11)     | NO   | PRI | NULL    |       |
+| Dept_name     | varchar(20) | NO   |     | NULL    |       |
+| Dept_location | varchar(20) | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+3 rows in set (1.63 sec)
+
+
+
+
+mysql> CREATE TABLE Employee(Emp_id INT PRIMARY KEY,Dept_id INT,FOREIGN KEY (Dept_id) REFERENCES Dept(Dept_id) ON DELETE CASCADE,Emp_fname VARCHAR(20) NOT NULL,Emp_lname VARCHAR(20) NOT NULL,Emp_Position VARCHAR(20),Emp_salary INT,Emp_JoinDate DATE NOT NULL);
+Query OK, 0 rows affected (0.18 sec)
+
+mysql> DESCRIBE te31411_db.Employee;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| Emp_id       | int(11)     | NO   | PRI | NULL    |       |
+| Dept_id      | int(11)     | YES  | MUL | NULL    |       |
+| Emp_fname    | varchar(20) | NO   |     | NULL    |       |
+| Emp_lname    | varchar(20) | NO   |     | NULL    |       |
+| Emp_Position | varchar(20) | YES  |     | NULL    |       |
+| Emp_salary   | int(11)     | YES  |     | NULL    |       |
+| Emp_JoinDate | date        | NO   |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+7 rows in set (1.73 sec)
+
+
+
+
+mysql> CREATE TABLE Project(Proj_id INT PRIMARY KEY,Dept_id INT,FOREIGN KEY (Dept_id) REFERENCES Dept(Dept_id) ON DELETE CASCADE,Proj_Name VARCHAR(20) NOT NULL,Proj_Location VARCHAR(20),Proj_cost INT,Proj_year YEAR NOT NULL);
+Query OK, 0 rows affected (0.20 sec)
+
+mysql> DESCRIBE te31411_db.Project;
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| Proj_id       | int(11)     | NO   | PRI | NULL    |       |
+| Dept_id       | int(11)     | YES  | MUL | NULL    |       |
+| Proj_Name     | varchar(20) | NO   |     | NULL    |       |
+| Proj_Location | varchar(20) | YES  |     | NULL    |       |
+| Proj_cost     | int(11)     | YES  |     | NULL    |       |
+| Proj_year     | year(4)     | NO   |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+
+
+
+#Query 1 : INSERT AT LEAST 10 RECORDS IN EMPLOYEE TABLE AND OTHER TABLES ACCORDINGLY.
+
+mysql> INSERT INTO Dept VALUES
+    -> (101, 'Computer', 'Delhi'),
+    -> (102, 'IT', 'Bangalore'),
+    -> (103, 'HR', 'Mumbai'),
+    -> (104, 'Finance', 'Mumbai'),
+    -> (105, 'Marketing', 'Chennai'),
+    -> (106, 'Operations', 'Pune'),
+    -> (107, 'Support', 'Hyderabad');
+Query OK, 7 rows affected (0.03 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+
+
+
+mysql> INSERT INTO Employee VALUES
+    -> (1, 101, 'Peter', 'Hall', 'Manager', 60000, '1980-06-15'),
+    -> (2, 102, 'Harry', 'Potter', 'Analyst', 45000, '1988-03-12'),
+    -> (3, 101, 'Paul', 'Smith', 'Clerk', 30000, '1984-09-25'),
+    -> (4, 103, 'John', 'Doe', 'Engineer', 50000, '1995-11-05'),
+    -> (5, 104, 'Henry', 'Ford', 'Technician', 35000, '1990-08-19'),
+    -> (6, 105, 'Alice', 'Brown', 'Manager', 70000, '1982-07-22'),
+    -> (7, 101, 'Helen', 'White', 'Analyst', 48000, '2000-01-10'),
+    -> (8, 102, 'Perry', 'Black', 'Developer', 55000, '1983-04-30'),
+    -> (9, 106, 'Bob', 'Green', 'Technician', 38000, '1998-06-14'),
+    -> (10, 107, 'Harry', 'Gold', 'Clerk', 31000, '1979-02-25');
+Query OK, 10 rows affected (0.08 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+
+
+
+mysql> INSERT INTO Project VALUES
+    -> (201, 101, 'AI System', 'Pune', 120000, 2004),
+    -> (202, 102, 'Web Portal', 'Mumbai', 300000, 2005),
+    -> (203, 103, 'HR Tool', 'Pune', 450000, 2007),
+    -> (204, 104, 'ERP Upgrade', 'Delhi', 80000, 2003),
+    -> (205, 105, 'Ad Campaign', 'Chennai', 950000, 2006),
+    -> (206, 106, 'Supply Chain', 'Pune', 500000, 2007),
+    -> (207, 107, 'Customer Service', 'Hyderabad', 1000000, 2008);
+Query OK, 7 rows affected (0.51 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+
+
+
+mysql> select * from Dept;
++---------+------------+---------------+
+| Dept_id | Dept_name  | Dept_location |
++---------+------------+---------------+
+|     101 | Computer   | Delhi         |
+|     102 | IT         | Bangalore     |
+|     103 | HR         | Mumbai        |
+|     104 | Finance    | Mumbai        |
+|     105 | Marketing  | Chennai       |
+|     106 | Operations | Pune          |
+|     107 | Support    | Hyderabad     |
++---------+------------+---------------+
+7 rows in set (0.29 sec)
+
+
+
+
+mysql> select * from Employee;
++--------+---------+-----------+-----------+--------------+------------+--------------+
+| Emp_id | Dept_id | Emp_fname | Emp_lname | Emp_Position | Emp_salary | Emp_JoinDate |
++--------+---------+-----------+-----------+--------------+------------+--------------+
+|      1 |     101 | Peter     | Hall      | Manager      |      60000 | 1980-06-15   |
+|      2 |     102 | Harry     | Potter    | Analyst      |      45000 | 1988-03-12   |
+|      3 |     101 | Paul      | Smith     | Clerk        |      30000 | 1984-09-25   |
+|      4 |     103 | John      | Doe       | Engineer     |      50000 | 1995-11-05   |
+|      5 |     104 | Henry     | Ford      | Technician   |      35000 | 1990-08-19   |
+|      6 |     105 | Alice     | Brown     | Manager      |      70000 | 1982-07-22   |
+|      7 |     101 | Helen     | White     | Analyst      |      48000 | 2000-01-10   |
+|      8 |     102 | Perry     | Black     | Developer    |      55000 | 1983-04-30   |
+|      9 |     106 | Bob       | Green     | Technician   |      38000 | 1998-06-14   |
+|     10 |     107 | Harry     | Gold      | Clerk        |      31000 | 1979-02-25   |
++--------+---------+-----------+-----------+--------------+------------+--------------+
+10 rows in set (0.06 sec)
+
+
+
+
+mysql> select * from Project;
++---------+---------+------------------+---------------+-----------+-----------+
+| Proj_id | Dept_id | Proj_Name        | Proj_Location | Proj_cost | Proj_year |
++---------+---------+------------------+---------------+-----------+-----------+
+|     201 |     101 | AI System        | Pune          |    120000 |      2004 |
+|     202 |     102 | Web Portal       | Mumbai        |    300000 |      2005 |
+|     203 |     103 | HR Tool          | Pune          |    450000 |      2007 |
+|     204 |     104 | ERP Upgrade      | Delhi         |     80000 |      2003 |
+|     205 |     105 | Ad Campaign      | Chennai       |    950000 |      2006 |
+|     206 |     106 | Supply Chain     | Pune          |    500000 |      2007 |
+|     207 |     107 | Customer Service | Hyderabad     |   1000000 |      2008 |
++---------+---------+------------------+---------------+-----------+-----------+
+7 rows in set (0.01 sec)
+
+
+
+
+#Query 2: DISPLAY ALL EMPLOYEE DETAILS WITH DEPARTMENT 'Computer' AND 'IT' AND EMPLOYEE FIRST NAME STARTING WITH 'p' OR 'h'.
+
+
+mysql> select * from Employee where Dept_id in (select Dept_id from Dept where Dept_name in ("Computer","IT")) AND (LOWER(Emp_fname) LIKE 'p%'
+ OR LOWER(Emp_fname) LIKE 'h%');
++--------+---------+-----------+-----------+--------------+------------+--------------+
+| Emp_id | Dept_id | Emp_fname | Emp_lname | Emp_Position | Emp_salary | Emp_JoinDate |
++--------+---------+-----------+-----------+--------------+------------+--------------+
+|      1 |     101 | Peter     | Hall      | Manager      |      60000 | 1980-06-15   |
+|      2 |     102 | Harry     | Potter    | Analyst      |      45000 | 1988-03-12   |
+|      3 |     101 | Paul      | Smith     | Clerk        |      30000 | 1984-09-25   |
+|      7 |     101 | Helen     | White     | Analyst      |      48000 | 2000-01-10   |
+|      8 |     102 | Perry     | Black     | Developer    |      55000 | 1983-04-30   |
++--------+---------+-----------+-----------+--------------+------------+--------------+
+5 rows in set (0.00 sec)
+
+
+
+
+#QUERY 3: LIST THE NUMBER OF DIFFERENT EMPLOYEE POSITIONS.
+
+mysql> select COUNT(DISTINCT Emp_position) as position_count from Employee;
++----------------+
+| position_count |
++----------------+
+|              6 |
++----------------+
+1 row in set (0.00 sec)
+
+
+
+
+#QUERY 4: GIVE 10% INCREASE IN SALARY OF THE EMPLOYEE WHOSE JOINING YEAR IS BEFORE 1985.
+
+mysql> update Employee set Emp_salary = Emp_salary + Emp_salary/10 where YEAR(Emp_JoinDate) > 1985;
+Query OK, 5 rows affected (0.04 sec)
+Rows matched: 5  Changed: 5  Warnings: 0
+
+mysql> select * from Employee;
++--------+---------+-----------+-----------+--------------+------------+--------------+
+| Emp_id | Dept_id | Emp_fname | Emp_lname | Emp_Position | Emp_salary | Emp_JoinDate |
++--------+---------+-----------+-----------+--------------+------------+--------------+
+|      1 |     101 | Peter     | Hall      | Manager      |      60000 | 1980-06-15   |
+|      2 |     102 | Harry     | Potter    | Analyst      |      49500 | 1988-03-12   |
+|      3 |     101 | Paul      | Smith     | Clerk        |      30000 | 1984-09-25   |
+|      4 |     103 | John      | Doe       | Engineer     |      55000 | 1995-11-05   |
+|      5 |     104 | Henry     | Ford      | Technician   |      38500 | 1990-08-19   |
+|      6 |     105 | Alice     | Brown     | Manager      |      70000 | 1982-07-22   |
+|      7 |     101 | Helen     | White     | Analyst      |      52800 | 2000-01-10   |
+|      8 |     102 | Perry     | Black     | Developer    |      55000 | 1983-04-30   |
+|      9 |     106 | Bob       | Green     | Technician   |      41800 | 1998-06-14   |
+|     10 |     107 | Harry     | Gold      | Clerk        |      31000 | 1979-02-25   |
++--------+---------+-----------+-----------+--------------+------------+--------------+
+10 rows in set (0.01 sec)
+
+
+
+
+QUERY 5: DELETE DEPARTMENT DETAILS WHICH LOCATION IS "MUMBAI".
+
+mysql> delete from Dept where Dept_location = "Mumbai";
+Query OK, 2 rows affected (0.03 sec)
+
+mysql> select * from Dept;
++---------+------------+---------------+
+| Dept_id | Dept_name  | Dept_location |
++---------+------------+---------------+
+|     101 | Computer   | Delhi         |
+|     102 | IT         | Bangalore     |
+|     105 | Marketing  | Chennai       |
+|     106 | Operations | Pune          |
+|     107 | Support    | Hyderabad     |
++---------+------------+---------------+
+5 rows in set (0.00 sec)
+
+
+
+
+#QUERY 6: FIND THE NAMES OF PROJECTS WITH LOCATION "PUNE".
+
+mysql> select Proj_Name from Project where Proj_Location = "Pune";
++--------------+
+| Proj_Name    |
++--------------+
+| AI System    |
+| Supply Chain |
++--------------+
+2 rows in set (0.01 sec)
+
+
+
+
+#QUERY 7: FIND THE PROJECT HAVING COST IN BETWEEN 100000 TO 500000.
+
+mysql> select Proj_Name from Project where Proj_cost BETWEEN 100000 AND 500000;
++--------------+
+| Proj_Name    |
++--------------+
+| AI System    |
+| Web Portal   |
+| Supply Chain |
++--------------+
+3 rows in set (0.00 sec)
+
+
+
+
+#QUERY 8: FIND THE PROJECT HAVING MAXIMUM PRICE AND FIND AVERAGE OF PROJECT COST.
+
+mysql> select Proj_Name,Proj_cost from Project where Proj_cost = (select MAX(Proj_cost) from Project);
++------------------+-----------+
+| Proj_Name        | Proj_cost |
++------------------+-----------+
+| Customer Service |   1000000 |
++------------------+-----------+
+1 row in set (0.01 sec)
+
+mysql> select AVG(Proj_cost) AS average_price from Project;
++---------------+
+| average_price |
++---------------+
+|   574000.0000 |
++---------------+
+1 row in set (0.00 sec)
+
+
+
+
+#QUERY 9: DISPLAY ALL EMPLOYEES WITH Emp_id AND Emp_fname IN DECREASING ORDER OF Emp_lname.
+
+mysql> select Emp_id,Emp_fname from Employee ORDER BY Emp_lname DESC;
++--------+-----------+
+| Emp_id | Emp_fname |
++--------+-----------+
+|      7 | Helen     |
+|      3 | Paul      |
+|      2 | Harry     |
+|      1 | Peter     |
+|      9 | Bob       |
+|     10 | Harry     |
+|      6 | Alice     |
+|      8 | Perry     |
++--------+-----------+
+8 rows in set (0.01 sec)
+
+
+
+
+#QUERY 10: DISPLAY Proj_name, Proj_location, Proj_cost OF ALL PROJECT STARTED IN 2004,2005,2007.
+
+mysql> select Proj_Name,Proj_Location,Proj_cost from Project where Proj_year in (2004,2005,2007);
++--------------+---------------+-----------+
+| Proj_Name    | Proj_Location | Proj_cost |
++--------------+---------------+-----------+
+| AI System    | Pune          |    120000 |
+| Web Portal   | Mumbai        |    300000 |
+| Supply Chain | Pune          |    500000 |
++--------------+---------------+-----------+
+3 rows in set (0.01 sec)
+
+
+
+
+<-------------CREATING VIEW------------->
+
+mysql> CREATE VIEW `Products Above Average Price` AS SELECT Proj_Name, Proj_cost FROM Project WHERE Proj_cost > (SELECT AVG(Proj_cost) FROM Project);
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> select * from `Products Above Average Price`;
++------------------+-----------+
+| Proj_Name        | Proj_cost |
++------------------+-----------+
+| Ad Campaign      |    950000 |
+| Customer Service |   1000000 |
++------------------+-----------+
+2 rows in set (0.00 sec)
+
+<-------------DROPING VIEW-------------->
+
+mysql> DROP VIEW `Products Above Average Price`;
+Query OK, 0 rows affected (0.00 sec)
+
+
+
+
+<----------CREATING SEQUENCE----------->
+
+ysql> Truncate table Project;
+Query OK, 0 rows affected (0.58 sec)
+
+mysql> ALTER TABLE Project MODIFY Proj_id INT AUTO_INCREMENT;
+Query OK, 0 rows affected (0.64 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE Project AUTO_INCREMENT = 201;
+Query OK, 0 rows affected (0.06 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> insert into Project(Dept_id,Proj_Name,Proj_Location,Proj_cost,Proj_year) values (101, 'AI System', 'Pune', 120000, 2004),(102,"Web Portal","Mumbai",300000,
+Query OK, 2 rows affected (0.04 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> select * from Project;
++---------+---------+------------+---------------+-----------+-----------+
+| Proj_id | Dept_id | Proj_Name  | Proj_Location | Proj_cost | Proj_year |
++---------+---------+------------+---------------+-----------+-----------+
+|     201 |     101 | AI System  | Pune          |    120000 |      2004 |
+|     202 |     102 | Web Portal | Mumbai        |    300000 |      2005 |
++---------+---------+------------+---------------+-----------+-----------+
+2 rows in set (0.00 sec)
+
+
+
+
+
+
+
