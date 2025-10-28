@@ -1,0 +1,219 @@
+***********Display All Records:-
+te31418_db> db.students.find().pretty()
+[
+  { _id: 1, name: 'Rahul', age: 21, department: 'Computer', marks: 90 },
+  { _id: 4, name: 'Meera', age: 23, department: 'ENTC', marks: 90 },
+  { _id: 5, age: 19, department: 'Civil', marks: 70, name: 'Riya' },
+  { _id: 2, name: 'Sneha', age: 20, department: 'IT', marks: 75 },
+  { _id: 3, name: 'Amit', age: 22, department: 'Computer', marks: 60 },
+  { _id: 6, name: 'Kiran', age: 24, department: 'Computer', marks: 95 }
+]
+te31418_db>
+
+
+
+***********Aggregate Functions:-
+
+1. $sum -> Total marks of all students:-
+te31418_db> db.students.aggregate([
+...   {
+...     $group: {
+...       _id: null,
+...       totalMarks: { $sum: "$marks" }
+...     }
+...   }
+... ])
+... ;
+[ { _id: null, totalMarks: 480 } ]
+te31418_db> 
+
+
+2. $avg -> Average marks of each department:-
+te31418_db> db.students.aggregate([
+...   {
+...     $group: {
+...       _id: "$department",
+...       averageMarks: { $avg: "$marks" }
+...     }
+...   }
+... ])
+... ;
+[
+  { _id: 'ENTC', averageMarks: 90 },
+  { _id: 'IT', averageMarks: 75 },
+  { _id: 'Civil', averageMarks: 70 },
+  { _id: 'Computer', averageMarks: 81.66666666666667 }
+]
+te31418_db> 
+
+
+3. $min -> Minimum marks in each department:-
+te31418_db> db.students.aggregate([
+...   {
+...     $group: {
+...       _id: "$department",
+...       minMarks: { $min: "$marks" }
+...     }
+...   }
+... ])
+... ;
+[
+  { _id: 'ENTC', minMarks: 90 },
+  { _id: 'Computer', minMarks: 60 },
+  { _id: 'Civil', minMarks: 70 },
+  { _id: 'IT', minMarks: 75 }
+]
+te31418_db> 
+
+
+4. $max -> Maximum marks in each department
+te31418_db> db.students.aggregate([
+...   {
+...     $group: {
+...       _id: "$department",
+...       maxMarks: { $max: "$marks" }
+...     }
+...   }
+... ])
+... ;
+[
+  { _id: 'ENTC', maxMarks: 90 },
+  { _id: 'Computer', maxMarks: 95 },
+  { _id: 'Civil', maxMarks: 70 },
+  { _id: 'IT', maxMarks: 75 }
+]
+te31418_db> 
+
+
+5. $count (via $sum:1) -> Count how many students in each department:-
+te31418_db> db.students.aggregate([
+...   {
+...     $group: {
+...       _id: "$department",
+...       totalStudents: { $sum: 1 }
+...     }
+...   }
+... ])
+... ;
+[
+  { _id: 'Civil', totalStudents: 1 },
+  { _id: 'Computer', totalStudents: 3 },
+  { _id: 'ENTC', totalStudents: 1 },
+  { _id: 'IT', totalStudents: 1 }
+]
+te31418_db> 
+
+
+
+***********Indexing:-
+
+1. Create Index on department:-
+te31418_db> db.students.createIndex({ department: 1 })
+... ;
+department_1
+te31418_db> 
+
+
+2. Check Indexes:-
+te31418_db> db.students.getIndexes()
+... ;
+[
+  { v: 2, key: { _id: 1 }, name: '_id_', ns: 'te31418_db.students' },
+  {
+    v: 2,
+    key: { department: 1 },
+    name: 'department_1',
+    ns: 'te31418_db.students'
+  }
+]
+te31418_db> 
+
+
+3. Explain query to verify index usage:-
+te31418_db> db.students.find(
+... {department: "Computer"}
+... ).explain(
+... 'executionStats'
+... );
+{
+  queryPlanner: {
+    plannerVersion: 1,
+    namespace: 'te31418_db.students',
+    indexFilterSet: false,
+    parsedQuery: { department: { '$eq': 'Computer' } },
+    winningPlan: {
+      stage: 'FETCH',
+      inputStage: {
+        stage: 'IXSCAN',
+        keyPattern: { department: 1 },
+        indexName: 'department_1',
+        isMultiKey: false,
+        multiKeyPaths: { department: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { department: [ '["Computer", "Computer"]' ] }
+      }
+    },
+    rejectedPlans: []
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 3,
+    executionTimeMillis: 2,
+    totalKeysExamined: 3,
+    totalDocsExamined: 3,
+    executionStages: {
+      stage: 'FETCH',
+      nReturned: 3,
+      executionTimeMillisEstimate: 1,
+      works: 4,
+      advanced: 3,
+      needTime: 0,
+      needYield: 0,
+      saveState: 0,
+      restoreState: 0,
+      isEOF: 1,
+      docsExamined: 3,
+      alreadyHasObj: 0,
+      inputStage: {
+        stage: 'IXSCAN',
+        nReturned: 3,
+        executionTimeMillisEstimate: 1,
+        works: 4,
+        advanced: 3,
+        needTime: 0,
+        needYield: 0,
+        saveState: 0,
+        restoreState: 0,
+        isEOF: 1,
+        keyPattern: { department: 1 },
+        indexName: 'department_1',
+        isMultiKey: false,
+        multiKeyPaths: { department: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { department: [ '["Computer", "Computer"]' ] },
+        keysExamined: 3,
+        seeks: 1,
+        dupsTested: 0,
+        dupsDropped: 0
+      }
+    }
+  },
+  serverInfo: {
+    host: 'dbsl-21',
+    port: 27017,
+    version: '4.2.13',
+    gitVersion: '82dd40f60c55dae12426c08fd7150d79a0e28e23'
+  },
+  ok: 1
+}
+te31418_db> 
+
+

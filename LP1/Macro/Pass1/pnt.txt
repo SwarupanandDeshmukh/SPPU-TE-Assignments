@@ -1,2 +1,2 @@
-M1:	X	Y	A	B	
+M1: X	Y	A	B	
 M2:	P	Q	U	V	
