@@ -2,38 +2,40 @@ import java.util.*;
 
 public class MemoryManagement {
     static Scanner sc = new Scanner(System.in);
-    static int blocks[];
     static int processes[];
+    static int blocks[];
     static int allocation[];
 
     public static void main(String args[]) {
-        System.out.print("Enter no. of blocks: ");
+        System.out.print("Enter no of blocks: ");
         int bno = sc.nextInt();
         blocks = new int[bno];
-        System.out.println("Enter block sizes:");
+        System.out.println("\n Enter block sizes");
         for (int i = 0; i < bno; i++) {
-            System.out.print("Enter Block " + (i + 1) + ": ");
+            System.out.print("block " + (i + 1) + ": ");
             blocks[i] = sc.nextInt();
         }
+        System.out.println();
 
-        System.out.print("\nEnter no. of processes: ");
+        System.out.print("Enter no of processes: ");
         int pno = sc.nextInt();
         processes = new int[pno];
-        System.out.println("Enter process sizes:");
+        System.out.println("\n Enter process sizes");
         for (int i = 0; i < pno; i++) {
-            System.out.print("Enter Process " + (i + 1) + ": ");
+            System.out.print("process " + (i + 1) + ": ");
             processes[i] = sc.nextInt();
         }
+        System.out.println();
 
         boolean exit = false;
         while (!exit) {
-            System.out.println("\n-------- MEMORY ALLOCATION STRATEGIES --------");
+            System.out.println("------------- MEMORY PLACEMENT STRATEGIES ------------");
             System.out.println("1. FIRST FIT");
             System.out.println("2. BEST FIT");
             System.out.println("3. WORST FIT");
             System.out.println("4. NEXT FIT");
             System.out.println("5. EXIT");
-            System.out.print("Enter Choice: ");
+            System.out.print("Enter choice: ");
             int ch = sc.nextInt();
             System.out.println();
 
@@ -41,29 +43,34 @@ public class MemoryManagement {
                 case 1:
                     firstFit();
                     break;
+
                 case 2:
                     bestFit();
                     break;
+
                 case 3:
                     worstFit();
                     break;
+
                 case 4:
                     nextFit();
                     break;
+
                 case 5:
                     exit = true;
                     break;
+
                 default:
-                    System.out.println("Invalid choice!");
+                    System.out.println("Invalid choice");
             }
+
         }
     }
 
-    // ---------- FIRST FIT ----------
     static void firstFit() {
         allocation = new int[processes.length];
         Arrays.fill(allocation, -1);
-        int[] tempBlock = Arrays.copyOf(blocks, blocks.length);
+        int tempBlock[] = Arrays.copyOf(blocks, blocks.length);
         boolean[] blockUsed = new boolean[blocks.length];
 
         for (int i = 0; i < processes.length; i++) {
@@ -76,14 +83,13 @@ public class MemoryManagement {
             }
         }
 
-        display("FIRST FIT");
+        display();
     }
 
-    // ---------- BEST FIT ----------
     static void bestFit() {
         allocation = new int[processes.length];
         Arrays.fill(allocation, -1);
-        int[] tempBlock = Arrays.copyOf(blocks, blocks.length);
+        int tempBlock[] = Arrays.copyOf(blocks, blocks.length);
         boolean[] blockUsed = new boolean[blocks.length];
 
         for (int i = 0; i < processes.length; i++) {
@@ -94,20 +100,20 @@ public class MemoryManagement {
                         bestIdx = j;
                 }
             }
+
             if (bestIdx != -1) {
                 allocation[i] = bestIdx;
                 blockUsed[bestIdx] = true;
             }
         }
 
-        display("BEST FIT");
+        display();
     }
 
-    // ---------- WORST FIT ----------
     static void worstFit() {
         allocation = new int[processes.length];
         Arrays.fill(allocation, -1);
-        int[] tempBlock = Arrays.copyOf(blocks, blocks.length);
+        int tempBlock[] = Arrays.copyOf(blocks, blocks.length);
         boolean[] blockUsed = new boolean[blocks.length];
 
         for (int i = 0; i < processes.length; i++) {
@@ -118,21 +124,21 @@ public class MemoryManagement {
                         worstIdx = j;
                 }
             }
+
             if (worstIdx != -1) {
                 allocation[i] = worstIdx;
                 blockUsed[worstIdx] = true;
             }
         }
 
-        display("WORST FIT");
+        display();
     }
 
-    // ---------- NEXT FIT ----------
     static void nextFit() {
         allocation = new int[processes.length];
         Arrays.fill(allocation, -1);
-        int[] tempBlock = Arrays.copyOf(blocks, blocks.length);
-        boolean[] blockUsed = new boolean[blocks.length];
+        int tempBlock[] = Arrays.copyOf(blocks, blocks.length);
+        boolean blockUsed[] = new boolean[blocks.length];
 
         int lastPos = 0;
         for (int i = 0; i < processes.length; i++) {
@@ -156,20 +162,19 @@ public class MemoryManagement {
                 allocation[i] = -1;
         }
 
-        display("NEXT FIT");
+        display();
     }
 
-    // ---------- DISPLAY RESULTS ----------
-    static void display(String strategy) {
-        System.out.println("=== " + strategy + " RESULT ===");
-        System.out.println("ProcessNo\tProcess Size\tBlock No");
+    static void display() {
+        System.out.println("ProcessNo\tProcessSize\tBlock No");
         for (int i = 0; i < processes.length; i++) {
             System.out.print((i + 1) + "\t\t" + processes[i] + "\t\t");
             if (allocation[i] != -1)
-                System.out.println((allocation[i] + 1));
+                System.out.println(allocation[i] + 1);
             else
-                System.out.println("Not Allocated");
+                System.out.println("Not allocated");
         }
         System.out.println();
     }
+
 }

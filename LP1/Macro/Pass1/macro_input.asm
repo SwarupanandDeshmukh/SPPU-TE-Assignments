@@ -1,18 +1,21 @@
 MACRO
-M1  &X, &Y, &A=AREG, &B=
-MOVER   &A, &X
-ADD	&A, ='1'
-MOVER	&B, &Y
-ADD	&B, ='5'
+ONE &O, &N, &E=AREG
+MOVER   &E, &O
+ADD &E, &N
+MOVEM   &E, &O
 MEND
 MACRO
-M2	&P, &Q, &U=CREG, &V=DREG
-MOVER	&U, &P
-MOVER	&V, &Q
-ADD	&U, ='15'
-ADD	&V, ='10'
+TWO &T, &W, &O=DREG
+MOVER   &O, &T
+ADD &O, &W
+MOVEM   &O, &T
 MEND
-START	100
-M1	10, 20, &B=CREG
-M2	100, 200, &V=AREG, &U=BREG
+START
+READ    O
+READ    T
+ONE O,  9
+TWO T,  7
+STOP
+O   DS  1
+T   DS  1
 END
